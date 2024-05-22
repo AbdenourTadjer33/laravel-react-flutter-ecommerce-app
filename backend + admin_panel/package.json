@@ -1,0 +1,48 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "@inertiajs/react": "^1.0.16",
+        "@radix-ui/react-alert-dialog": "^1.0.5",
+        "@radix-ui/react-checkbox": "^1.0.4",
+        "@radix-ui/react-dialog": "^1.0.5",
+        "@radix-ui/react-dropdown-menu": "^2.0.6",
+        "@radix-ui/react-label": "^2.0.2",
+        "@radix-ui/react-popover": "^1.0.7",
+        "@radix-ui/react-select": "^2.0.0",
+        "@radix-ui/react-slot": "^1.0.2",
+        "@radix-ui/react-switch": "^1.0.3",
+        "@radix-ui/react-toast": "^1.1.5",
+        "@radix-ui/react-tooltip": "^1.0.7",
+        "@tanstack/react-table": "^8.17.3",
+        "@types/node": "^20.12.12",
+        "@types/react": "^18.3.2",
+        "@types/react-dom": "^18.3.0",
+        "@vitejs/plugin-react": "^4.2.1",
+        "autoprefixer": "^10.4.19",
+        "axios": "^1.7.1",
+        "class-variance-authority": "^0.7.0",
+        "clsx": "^2.1.1",
+        "dayjs": "^1.11.11",
+        "laravel-vite-plugin": "^1.0.4",
+        "lucide-react": "^0.378.0",
+        "postcss": "^8.4.38",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "react-icons": "^5.2.1",
+        "tailwind-merge": "^2.3.0",
+        "tailwindcss": "^3.4.3",
+        "tailwindcss-animate": "^1.0.7",
+        "typescript": "^5.4.5",
+        "vite": "^5.2.11",
+        "ziggy-js": "^2.2.1"
+    },
+    "dependencies": {
+        "@radix-ui/react-toggle": "^1.0.3",
+        "@radix-ui/react-toggle-group": "^1.0.4"
+    }
+}
