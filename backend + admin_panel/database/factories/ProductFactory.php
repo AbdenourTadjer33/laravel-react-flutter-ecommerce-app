@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Brand;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +22,8 @@ class ProductFactory extends Factory
             'description' => fake()->text(),
             'price' => rand(1000, 10000),
             'status' => rand(0, 1),
-            'images' => null,
+            'sizes' => ["40", "41"],
+            "brand_id" => Brand::all()->random()->id,
         ];
     }
 }

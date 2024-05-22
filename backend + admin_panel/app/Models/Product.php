@@ -64,7 +64,7 @@ class Product extends Model
 
     public function orders(): BelongsToMany
     {
-        return $this->belongsToMany(Order::class)->withPivot(['qte', 'total']);
+        return $this->belongsToMany(Order::class)->withPivot(['qte', 'total', 'size']);
     }
 
     public function scopeActive(Builder $query)

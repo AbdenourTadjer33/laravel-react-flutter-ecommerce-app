@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('ref')->unique();
             $table->string('name');
             $table->string('phone', 10);
             $table->string('email');
             $table->float('total');
             $table->enum('status', ['nouvelle commande', 'confirmé', 'annuler', 'en attente'])->default("nouvelle commande");
+            $table->string('address');
             $table->timestamps();
         });
     }

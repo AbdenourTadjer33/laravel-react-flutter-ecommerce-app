@@ -15,6 +15,7 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->integer('qte');
+            $table->string('size');
             $table->float('total');
 
             $table->primary(['product_id', 'order_id']);
