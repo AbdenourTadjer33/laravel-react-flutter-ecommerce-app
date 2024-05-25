@@ -26,14 +26,13 @@ class CartService
 
         $products = Product::active()
             ->whereIn('slug', $slugs)
-            ->select('id', 'slug', 'price')
             ->get();
 
         $this->cart = $products->map(function ($product) use ($items) {
             $item = collect($items)->firstWhere('slug', $product->slug);
             return [
                 ...collect($product)->only('id', 'slug', 'name', 'price', 'images')->toArray(),
-                'size' => $item['size'],
+                'size' => $item['size'] ?? null,
                 'qte' => $item['qte'],
                 'total' => $item['qte'] * $product['price'],
             ];

@@ -156,13 +156,12 @@ const ProductTable = ({ products }: { products: Pagination<Product> }) => {
         data: finalData,
         columns: finaleColumnDef,
         getCoreRowModel: getCoreRowModel(),
-        getRowId: (row) => row.id,
+        getRowId: (row) => row.slug,
         manualPagination: true,
     });
     return (
         <TableWraper>
             <div className="p-4"></div>
-
             <DataTable
                 options={{
                     table,
@@ -172,6 +171,7 @@ const ProductTable = ({ products }: { products: Pagination<Product> }) => {
                     },
                 }}
             />
+            id
         </TableWraper>
     );
 };
