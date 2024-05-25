@@ -12,8 +12,7 @@ function Products() {
   return (
     <>
       <Container>
-        {/* <pre>{JSON.strinfgify(products, null, 2)}</pre> */}
-        <div className="flex items-center gap-4 justify-center">
+        <div className="flex items-center justify-center flex-wrap gap-4">
           {products.map((product) => (
             <Card key={product.slug} {...product} />
           ))}
