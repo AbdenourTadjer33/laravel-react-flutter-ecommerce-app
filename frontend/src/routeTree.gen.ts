@@ -14,12 +14,12 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as ProductsIndexImport } from './routes/products/index'
+import { Route as OrderIndexImport } from './routes/order/index'
 import { Route as ProductsSlugImport } from './routes/products/$slug'
 
 // Create Virtual Routes
 
 const IndexLazyImport = createFileRoute('/')()
-const OrderIndexLazyImport = createFileRoute('/order/')()
 const OrderCreateLazyImport = createFileRoute('/order/create')()
 
 // Create/Update Routes
@@ -29,17 +29,17 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
-const OrderIndexLazyRoute = OrderIndexLazyImport.update({
-  path: '/order/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/order/index.lazy').then((d) => d.Route))
-
 const ProductsIndexRoute = ProductsIndexImport.update({
   path: '/products/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() =>
   import('./routes/products/index.lazy').then((d) => d.Route),
 )
+
+const OrderIndexRoute = OrderIndexImport.update({
+  path: '/order/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/order/index.lazy').then((d) => d.Route))
 
 const OrderCreateLazyRoute = OrderCreateLazyImport.update({
   path: '/order/create',
@@ -78,18 +78,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrderCreateLazyImport
       parentRoute: typeof rootRoute
     }
+    '/order/': {
+      id: '/order/'
+      path: '/order'
+      fullPath: '/order'
+      preLoaderRoute: typeof OrderIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/products/': {
       id: '/products/'
       path: '/products'
       fullPath: '/products'
       preLoaderRoute: typeof ProductsIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/order/': {
-      id: '/order/'
-      path: '/order'
-      fullPath: '/order'
-      preLoaderRoute: typeof OrderIndexLazyImport
       parentRoute: typeof rootRoute
     }
   }
@@ -101,8 +101,8 @@ export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   ProductsSlugRoute,
   OrderCreateLazyRoute,
+  OrderIndexRoute,
   ProductsIndexRoute,
-  OrderIndexLazyRoute,
 })
 
 /* prettier-ignore-end */
