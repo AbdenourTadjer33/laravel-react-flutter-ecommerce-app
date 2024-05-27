@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:shamo/pages/models/category_model.dart';
 import 'package:shamo/pages/models/product_model.dart';
+import 'package:shamo/pages/models/brand_model.dart';
 import 'package:shamo/pages/widgets/product_card.dart';
 import 'package:shamo/pages/widgets/product_tile.dart';
 import 'package:shamo/theme.dart';
@@ -16,29 +16,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<dynamic> _data = [];
+  List<Product> _data = [];
+  List<Product> _filteredData = [];
+  List<Brand> _brands = [];
   bool _isLoading = false;
   bool _isError = false;
-  List<Category> categoriess = [
-    Category(name: 'Tous', isSelected: true),
-    Category(name: 'Addidas'),
-    Category(name: 'Nike'),
-    Category(name: 'Home'),
-    Category(name: 'Famme'),
-  ];
-
-  void _onCategorySelected(int index) {
-    setState(() {
-      for (int i = 0; i < categoriess.length; i++) {
-        categoriess[i].isSelected = i == index;
-      }
-    });
-  }
+  int _selectedCategoryIndex = 0;
+  TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
 
   @override
   void initState() {
     super.initState();
     _fetchData();
+    _searchController.addListener(_filterProducts);
+  }
+
+  void _filterProducts() {
+    String query = _searchController.text.toLowerCase();
+    if (query.isEmpty) {
+      setState(() {
+        _isSearching = false;
+      });
+    } else {
+      setState(() {
+        _isSearching = true;
+        _filteredData = _data
+            .where((product) => product.name.toLowerCase().contains(query))
+            .toList();
+      });
+    }
   }
 
   Future<void> _fetchData() async {
@@ -49,7 +56,11 @@ class _HomePageState extends State<HomePage> {
 
     try {
       final data = await ApiService.getRequest('products');
+      final brands = await ApiService.getRequest('brands');
       _data = data.map<Product>((item) => Product.fromJson(item)).toList();
+      _filteredData = _data;
+      _brands = [Brand(id: 0, name: 'All categories', logo: '')] +
+          brands.map<Brand>((item) => Brand.fromJson(item)).toList();
 
       setState(() {
         _isLoading = false;
@@ -60,6 +71,44 @@ class _HomePageState extends State<HomePage> {
         _isError = true;
       });
       print('Error: $e');
+    }
+  }
+
+  void _onCategorySelected(int index, int id) async {
+    if (id == 0) {
+      try {
+        final data = await ApiService.getRequest('products');
+        List<Product> products =
+            data.map<Product>((item) => Product.fromJson(item)).toList();
+        setState(() {
+          _selectedCategoryIndex = index;
+          _data = products;
+          _filteredData = products;
+        });
+      } catch (e) {
+        print('Error: $e');
+      }
+    } else {
+      try {
+        final data = await ApiService.getRequest('brands/$id');
+        if (data is Map<String, dynamic>) {
+          List<Product> products = (data['products'] as List)
+              .map((item) => Product.fromJson(item))
+              .toList();
+          setState(() {
+            _selectedCategoryIndex = index;
+            _data = products;
+            _filteredData = products;
+          });
+        } else {
+          throw Exception('Invalid data format');
+        }
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+          _isError = true;
+        });
+      }
     }
   }
 
@@ -111,6 +160,22 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
+    Widget searchField() {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 10),
+        child: TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: 'Search products...',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            prefixIcon: Icon(Icons.search),
+          ),
+        ),
+      );
+    }
+
     Widget categories() {
       return Container(
         margin: EdgeInsets.only(top: defaultMargin),
@@ -120,26 +185,26 @@ class _HomePageState extends State<HomePage> {
             children: [
               SizedBox(width: defaultMargin),
               Row(
-                children: categoriess.map((category) {
-                  int index = categoriess.indexOf(category);
+                children: _brands.map((brand) {
+                  int index = _brands.indexOf(brand);
+                  bool isSelected = index == _selectedCategoryIndex;
+
                   return GestureDetector(
-                    onTap: () => _onCategorySelected(index),
+                    onTap: () => _onCategorySelected(index, brand.id),
                     child: Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       margin: EdgeInsets.only(right: 16),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: category.isSelected
-                            ? primaryColor
-                            : transparentColor,
-                        border: category.isSelected
+                        color: isSelected ? primaryColor : transparentColor,
+                        border: isSelected
                             ? null
                             : Border.all(color: subtitleColor),
                       ),
                       child: Text(
-                        category.name,
-                        style: category.isSelected
+                        brand.name,
+                        style: isSelected
                             ? primaryTextStyle.copyWith(
                                 fontSize: 13, fontWeight: medium)
                             : subtitleTextStyle.copyWith(
@@ -180,7 +245,7 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             children: [
               Row(
-                children: _data
+                children: _filteredData
                     .map((product) => ProductCard(product: product))
                     .toList(),
               )
@@ -210,12 +275,22 @@ class _HomePageState extends State<HomePage> {
     Widget newArrivals() {
       return Container(
         margin: EdgeInsets.only(top: 14),
-        child: Column(children: [
-          Column(
-            children:
-                _data.map((product) => ProductTile(product: product)).toList(),
-          )
-        ]),
+        child: Column(
+          children: _filteredData
+              .map((product) => ProductTile(product: product))
+              .toList(),
+        ),
+      );
+    }
+
+    Widget searchResults() {
+      return Container(
+        margin: EdgeInsets.only(top: 14),
+        child: Column(
+          children: _filteredData
+              .map((product) => ProductTile(product: product))
+              .toList(),
+        ),
       );
     }
 
@@ -252,11 +327,18 @@ class _HomePageState extends State<HomePage> {
               : ListView(
                   children: [
                     header(),
-                    categories(),
-                    popularProductsTitle(),
-                    popularProducts(),
-                    newArrivalsTitle(),
-                    newArrivals(),
+                    searchField(),
+                    _isSearching
+                        ? searchResults()
+                        : Column(
+                            children: [
+                              categories(),
+                              popularProductsTitle(),
+                              popularProducts(),
+                              newArrivalsTitle(),
+                              newArrivals(),
+                            ],
+                          ),
                   ],
                 ),
     );

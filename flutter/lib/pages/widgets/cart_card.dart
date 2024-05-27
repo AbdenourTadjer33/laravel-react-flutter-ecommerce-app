@@ -1,18 +1,51 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:shamo/pages/models/storage_products.dart';
 import 'package:shamo/theme.dart';
 
-class CartCard extends StatelessWidget {
+class CartCard extends StatefulWidget {
   final StorageProducts product;
+  final Function(double totalPrice, String operator) onUpdatePrice;
 
-  const CartCard({super.key, required this.product});
+  const CartCard(
+      {super.key, required this.product, required this.onUpdatePrice});
+
+  @override
+  _CartCardState createState() => _CartCardState();
+}
+
+class _CartCardState extends State<CartCard> {
+  int _quantity = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _quantity = widget.product.qts;
+  }
+
+  void _incrementQuantity() {
+    setState(() {
+      _quantity++;
+      updateProductQuantityInStorage(
+          widget.product.slug, widget.product.selectedSize, _quantity);
+      widget.onUpdatePrice(widget.product.price, '+' );
+    });
+  }
+
+  void _decrementQuantity() {
+    if (_quantity > 1) {
+      setState(() {
+        _quantity--;
+        updateProductQuantityInStorage(
+            widget.product.slug, widget.product.selectedSize, _quantity);
+        widget.onUpdatePrice(widget.product.price , '-');
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10),
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: backgroundColor4,
@@ -26,9 +59,11 @@ class CartCard extends StatelessWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    image: DecorationImage(
-                        image: AssetImage('assets/image_shoes.png'))),
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: AssetImage('assets/image_shoes.png'),
+                  ),
+                ),
               ),
               SizedBox(width: 12),
               Expanded(
@@ -36,32 +71,34 @@ class CartCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      product.name,
+                      '${widget.product.name}  ${widget.product.selectedSize}',
                       style: primaryTextStyle.copyWith(fontWeight: semiBold),
                     ),
-                    Text('${product.price} DA',
-                        style: priceTextStyle.copyWith(fontWeight: bold))
+                    Text(
+                      '${widget.product.price} DA',
+                      style: priceTextStyle.copyWith(fontWeight: bold),
+                    ),
                   ],
                 ),
               ),
+              Column(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.add, size: 16, color: primaryColor),
+                    onPressed: _incrementQuantity,
+                  ),
+                  Text(
+                    '$_quantity',
+                    style: primaryTextStyle.copyWith(fontWeight: semiBold),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.remove, size: 16, color: primaryColor),
+                    onPressed: _decrementQuantity,
+                  ),
+                ],
+              ),
             ],
           ),
-          // TextButton(
-          //   onPressed: () async {
-          //     await clearProductsFromStorage();
-          //   },
-          //   child: Row(
-          //     children: [
-          //       Image.asset('assets/icon_remove.png', width: 10),
-          //       SizedBox(width: 4),
-          //       Text(
-          //         'Supprimer',
-          //         style:
-          //             alerTextStyle.copyWith(fontSize: 12, fontWeight: light),
-          //       )
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );

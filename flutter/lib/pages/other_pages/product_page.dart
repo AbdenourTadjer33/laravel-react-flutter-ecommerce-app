@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
 
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:shamo/theme.dart';
@@ -27,7 +26,7 @@ class _ProductPageState extends State<ProductPage> {
   int currentIndex = 0;
 
   // Define selected size
-  String selectedSize = '';
+  String selectedSize =  '';
 
   // Function to update selected size
   void selectSize(String size) {
@@ -35,6 +34,13 @@ class _ProductPageState extends State<ProductPage> {
       selectedSize = size;
     });
   }
+
+    @override
+  void initState() {
+    super.initState();
+    selectedSize = widget.product.sizes[0];
+  }
+
 
   Widget sizeOptions(List<dynamic> availableSizes) {
     return Wrap(
@@ -69,10 +75,26 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  Future<void> showSuccessDialog(
+Future<void> showSuccessDialog(
       String selectedSize, String slug, String name, double price) async {
-    await addProductToStorage(slug, selectedSize, name, price);
+    // Check if the product with the same slug and size exists in storage
+    List<StorageProducts> products = await getProductsFromStorage();
+    bool productExists = false;
+    for (var product in products) {
+      if (product.slug == slug && product.selectedSize == selectedSize) {
+        // If the product exists, update its quantity
+        product.qts += 1;
+        await updateProductQuantityInStorage(slug, selectedSize, product.qts);
+        productExists = true;
+        break;
+      }
+    }
 
+    if (!productExists) {
+      // If the product doesn't exist, add it to storage with quantity 1
+      int qts = 1;
+      await addProductToStorage(slug, selectedSize, name, price, qts);
+    }
     return showDialog(
       context: context,
       builder: (BuildContext context) => Container(

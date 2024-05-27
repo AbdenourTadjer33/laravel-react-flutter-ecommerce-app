@@ -32,12 +32,22 @@ class _CartPageState extends State<CartPage> {
     });
   }
 
-    double calculateTotalPrice() {
-    double total = 0.0;
+  double calculateTotalPrice() {
+    double totalPrice = 0.0;
     for (var product in _products) {
-      total += product.price;
+      totalPrice += product.price * product.qts;
     }
-    return total;
+    return totalPrice;
+  }
+
+  void onUpdatePrice(double updatedPrice, String operator) {
+    setState(() {
+      if (operator == '-') {
+        totalPrice -= updatedPrice;
+      } else {
+        totalPrice += updatedPrice;
+      }
+    });
   }
 
   Future<void> handleDeleteProduct(String slug, String selectedSize) async {
@@ -127,13 +137,16 @@ class _CartPageState extends State<CartPage> {
           children: [
             SizedBox(height: 18), // Add your desired height here
             Dismissible(
-              key: Key(_products[index].slug+_products[index].selectedSize),
+              key: Key(_products[index].slug + _products[index].selectedSize),
               onDismissed: (direction) {
                 handleDeleteProduct(
                     _products[index].slug, _products[index].selectedSize);
               },
               background: Container(color: Colors.red),
-              child: CartCard(product: _products[index]),
+              child: CartCard(
+                product: _products[index],
+                onUpdatePrice: onUpdatePrice, // Pass onUpdatePrice function
+              ),
             ),
           ],
         );
