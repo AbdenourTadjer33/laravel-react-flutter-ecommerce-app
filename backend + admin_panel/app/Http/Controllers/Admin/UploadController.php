@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use App\Http\Controllers\Controller;
@@ -38,6 +39,24 @@ class UploadController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        $files = explode(',', $id);
+
+        $toDelete = collect($files)->map(function (string $file) {
+            return Str::isUrl($file) ? storagePathFromUrl($file) : $file;
+        })->toArray();
+
+        Storage::delete($toDelete);
+
+        return response()->json();
     }
+}
+
+
+function storagePathFromUrl($url)
+{
+    $baseUrl = Storage::url('');
+    if (strpos($url, $baseUrl) === 0) {
+        return substr($url, strlen($baseUrl));
+    }
+    throw new \Exception('The provided URL does not match the storage base URL.');
 }

@@ -13,28 +13,26 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as ProductsIndexImport } from './routes/products/index'
+import { Route as SlugImport } from './routes/$slug'
+import { Route as IndexImport } from './routes/index'
 import { Route as OrderIndexImport } from './routes/order/index'
 import { Route as ProductsSlugImport } from './routes/products/$slug'
 
 // Create Virtual Routes
 
-const IndexLazyImport = createFileRoute('/')()
 const OrderCreateLazyImport = createFileRoute('/order/create')()
 
 // Create/Update Routes
 
-const IndexLazyRoute = IndexLazyImport.update({
+const SlugRoute = SlugImport.update({
+  path: '/$slug',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
-
-const ProductsIndexRoute = ProductsIndexImport.update({
-  path: '/products/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/products/index.lazy').then((d) => d.Route),
-)
+} as any)
 
 const OrderIndexRoute = OrderIndexImport.update({
   path: '/order/',
@@ -49,9 +47,7 @@ const OrderCreateLazyRoute = OrderCreateLazyImport.update({
 const ProductsSlugRoute = ProductsSlugImport.update({
   path: '/products/$slug',
   getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/products/$slug.lazy').then((d) => d.Route),
-)
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -61,7 +57,14 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/$slug': {
+      id: '/$slug'
+      path: '/$slug'
+      fullPath: '/$slug'
+      preLoaderRoute: typeof SlugImport
       parentRoute: typeof rootRoute
     }
     '/products/$slug': {
@@ -85,24 +88,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrderIndexImport
       parentRoute: typeof rootRoute
     }
-    '/products/': {
-      id: '/products/'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof ProductsIndexImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  IndexLazyRoute,
+  IndexRoute,
+  SlugRoute,
   ProductsSlugRoute,
   OrderCreateLazyRoute,
   OrderIndexRoute,
-  ProductsIndexRoute,
 })
 
 /* prettier-ignore-end */

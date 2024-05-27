@@ -7,6 +7,7 @@ export type Product = {
     description?: string;
     price: string;
     images: string[];
+    brand?: string;
 };
 
 async function getProducts(): Promise<Product[]> {

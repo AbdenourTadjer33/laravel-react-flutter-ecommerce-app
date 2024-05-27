@@ -11,4 +11,12 @@ Route::get('/', DashboardController::class)->name('dashboard');
 Route::resource('brands', BrandController::class)->names('brand');
 Route::resource('products', ProductController::class)->names('product');
 Route::resource('orders', OrderController::class)->names('order');
-Route::resource('upload', UploadController::class)->names('upload')->only('store', 'destroy');
+
+Route::resource('upload', UploadController::class)
+    ->names('upload')
+    ->only('store', 'destroy')
+    ->where(['upload' => '.*']);
+
+Route::get('/test/{str}', function ($str) {
+    return $str;
+});

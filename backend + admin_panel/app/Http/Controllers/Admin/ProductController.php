@@ -47,7 +47,7 @@ class ProductController extends Controller
             'price' => $request->input('price'),
             'status' => $request->input('status'),
             'images' => $request->input('images'),
-            'brand_id' => $request->input('brand'),
+            'brand_id' => $request->input('brand_id'),
             'sizes' => $request->input('sizes'),
         ]);
 
