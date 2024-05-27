@@ -1,5 +1,5 @@
 import React from "react";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
 import AuthLayout from "@/Layouts/AuthLayout";
 import { Button } from "@/Components/ui/button";
 import { FormWrapper } from "@/Components/ui/form";
@@ -16,6 +16,7 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/Components/ui/toggle-group";
+import { storeImages } from "@/Service/files";
 
 const Create = ({ brands }: { brands: Brand[] }) => {
     const { data, setData, errors, post, processing, clearErrors } = useForm<{
@@ -36,12 +37,39 @@ const Create = ({ brands }: { brands: Brand[] }) => {
         brand_id: "",
     });
 
+    const handleImageUpload = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const files = e.target.files;
+        if (!files || !files.length) return;
+
+        const formData = new FormData();
+
+        Array.from(files).map((file) => {
+            formData.append("images[]", file);
+        });
+
+        const response = await storeImages(formData);
+        setData("images", [data.images, ...response]);
+
+        e.target.value = "";
+    };
+
+    React.useEffect(() => {
+        console.log(data.images);
+    }, [data.images])
+
+    const deleteImage = (id: number) => {
+        setData((data) => {
+            data.images.splice(id, 1);
+            return { ...data };
+        });
+    };
+
     const submitHandler = (e: React.FormEvent) => {
         e.preventDefault();
 
-        post(route("admin.product.store"), {
-            preserveScroll: true,
-        });
+        post(route("admin.product.store"));
     };
 
     return (
@@ -142,9 +170,23 @@ const Create = ({ brands }: { brands: Brand[] }) => {
 
                 <div className="space-y-1 col-span-3">
                     <Label>Uploader les images de produits</Label>
-                    <Input type="file" accept="image/png, image/jpeg" />
+                    <Input type="file" onChange={handleImageUpload} multiple max={3} />
                     <InputError message={errors.images} />
                 </div>
+
+                {!!data.images.length && (
+                    <div className="flex items-center justify-start gap-4 overflow-auto col-span-3">
+                        {data.images.map((image, idx) => (
+                            <div
+                                key={idx}
+                                className="relative shrink-0 hover:opacity-50 transition-opacity duration-150 cursor-pointer"
+                                onClick={() => deleteImage(idx)}
+                            >
+                                <img src={image} className="h-28 w-auto" />
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <div className="col-span-3">
                     <Label className="inline-flex items-center gap-2">
@@ -157,8 +199,6 @@ const Create = ({ brands }: { brands: Brand[] }) => {
                         Disponible en stock
                     </Label>
                 </div>
-
-                <pre>{JSON.stringify(data, null, 2)}</pre>
 
                 <div className="col-span-3 flex items-center gap-4">
                     <Button
