@@ -7,7 +7,6 @@ import 'package:shamo/theme.dart';
 class CheckoutCard extends StatelessWidget {
   final StorageProducts product;
 
-
   const CheckoutCard({super.key, required this.product});
 
   @override
@@ -19,35 +18,42 @@ class CheckoutCard extends StatelessWidget {
         color: backgroundColor4,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(
-                image: AssetImage('assets/image_shoes.png'),
-              ),
-            ),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name,
-                  style: primaryTextStyle.copyWith(fontWeight: semiBold),
-                  overflow: TextOverflow.ellipsis,
+          Row(
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: AssetImage('assets/image_shoes.png'),
+                  ),
                 ),
-                SizedBox(height: 2),
-                // ! product price
-                Text('${product.price} DA', style: priceTextStyle),
-              ],
-            ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${product.name}  ${product.selectedSize}',
+                      style: primaryTextStyle.copyWith(fontWeight: semiBold),
+                    ),
+                    Text(
+                      '${product.price} DA',
+                      style: priceTextStyle.copyWith(fontWeight: bold),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                '${product.qts}',
+                style: primaryTextStyle.copyWith(fontWeight: semiBold),
+              ),
+            ],
           ),
-          SizedBox(width: 12),
         ],
       ),
     );

@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:shamo/pages/api/api_services.dart';
 import 'package:shamo/pages/widgets/checkout_card.dart';
 import 'package:shamo/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   late String phone;
   late String address;
   double totalPrice = 0.0;
+  int totalQts = 0;
 
   @override
   void initState() {
@@ -44,15 +46,53 @@ class _CheckoutPageState extends State<CheckoutPage> {
     setState(() {
       _products = data;
       totalPrice = calculateTotalPrice();
+      totalQts = calculateTotalQts();
     });
+  }
+
+  Future<void> submit() async {
+    List<Map<String, dynamic>> cartItems = _products.map((product) {
+      return {
+        'slug': product.slug,
+        'qte': product.qts.toString(),
+        'size': product.selectedSize.toString(),
+      };
+    }).toList();
+
+    Map<String, dynamic> orderData = {
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'address': address,
+      'cart': cartItems,
+    };
+
+    try {
+
+      await ApiService.postRequest('orders', orderData);
+      await clearProductsFromStorage();
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/checkout-success', (route) => false);
+    } catch (e) {
+      print('Failed to submit order: $e');
+    }
+
   }
 
   double calculateTotalPrice() {
     double total = 0.0;
     for (var product in _products) {
-      total += product.price;
+      total += product.price * product.qts;
     }
     return total;
+  }
+
+  int calculateTotalQts() {
+    int qts = 0;
+    for (var product in _products) {
+      qts += product.qts;
+    }
+    return qts;
   }
 
   PreferredSizeWidget header() {
@@ -252,7 +292,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   ),
                   // ! order quantty
                   Text(
-                    '${_products.length} Articles',
+                    '$totalQts Articles',
                     style: primaryTextStyle.copyWith(fontWeight: medium),
                   ),
                 ],
@@ -306,8 +346,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           margin: EdgeInsets.symmetric(vertical: defaultMargin),
           child: TextButton(
             onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, '/checkout-success', (route) => false);
+              submit();
             },
             style: TextButton.styleFrom(
               backgroundColor: primaryColor,
