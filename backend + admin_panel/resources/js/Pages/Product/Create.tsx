@@ -16,7 +16,8 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/Components/ui/toggle-group";
-import { storeImages } from "@/Service/files";
+import { destroy, store } from "@/Service/files";
+import { MdDelete } from "react-icons/md";
 
 const Create = ({ brands }: { brands: Brand[] }) => {
     const { data, setData, errors, post, processing, clearErrors } = useForm<{
@@ -49,22 +50,16 @@ const Create = ({ brands }: { brands: Brand[] }) => {
             formData.append("images[]", file);
         });
 
-        const response = await storeImages(formData);
-        setData("images", [data.images, ...response]);
+        const response = await store(formData);
+        setData("images", [...data.images, ...response]);
 
         e.target.value = "";
     };
 
-    React.useEffect(() => {
-        console.log(data.images);
-    }, [data.images])
-
-    const deleteImage = (id: number) => {
-        setData((data) => {
-            data.images.splice(id, 1);
-            return { ...data };
-        });
-    };
+  const deleteImage = async (id: string, idx: number) => {
+      setData("images", data.images.splice(idx, 1));
+      await destroy(id);
+  };
 
     const submitHandler = (e: React.FormEvent) => {
         e.preventDefault();
@@ -170,19 +165,30 @@ const Create = ({ brands }: { brands: Brand[] }) => {
 
                 <div className="space-y-1 col-span-3">
                     <Label>Uploader les images de produits</Label>
-                    <Input type="file" onChange={handleImageUpload} multiple max={3} />
+                    <Input
+                        type="file"
+                        onChange={handleImageUpload}
+                        multiple
+                        max={3}
+                    />
                     <InputError message={errors.images} />
                 </div>
 
                 {!!data.images.length && (
                     <div className="flex items-center justify-start gap-4 overflow-auto col-span-3">
                         {data.images.map((image, idx) => (
-                            <div
-                                key={idx}
-                                className="relative shrink-0 hover:opacity-50 transition-opacity duration-150 cursor-pointer"
-                                onClick={() => deleteImage(idx)}
-                            >
+                            <div key={idx} className="relative shrink-0 group">
                                 <img src={image} className="h-28 w-auto" />
+
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="icon"
+                                    className="absolute bottom-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() => deleteImage(image, idx)}
+                                >
+                                    <MdDelete className="w-5 h-5" />
+                                </Button>
                             </div>
                         ))}
                     </div>

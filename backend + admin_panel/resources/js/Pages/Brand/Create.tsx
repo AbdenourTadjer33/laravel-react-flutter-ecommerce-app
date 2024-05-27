@@ -5,7 +5,7 @@ import { Button } from "@/Components/ui/button";
 import { FormWrapper } from "@/Components/ui/form";
 import { Input, InputError } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import { storeImages } from "@/Service/files";
+import { store } from "@/Service/files";
 
 const Create = () => {
     const { data, setData, errors, post, processing, clearErrors } = useForm({
@@ -25,7 +25,7 @@ const Create = () => {
             formData.append("image", file);
         });
 
-        const response = await storeImages(formData);
+        const response = await store(formData);
         setData("logo", response);
 
         e.target.value = "";

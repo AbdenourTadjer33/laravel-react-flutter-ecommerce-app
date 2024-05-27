@@ -13,6 +13,16 @@ async function store(formData: FormData) {
     }
 }
 
+async function destroy(...id: string[]) {
+    try {
+        const response = await axios.delete(route('admin.upload.destroy', id.join(',')))
+        return await response.data;
+    } catch (error) {
+        // handle error
+    }
+}
+
 export {
-    store as storeImages,
+    store,
+    destroy,
 }
