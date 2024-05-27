@@ -5,12 +5,31 @@ import { Button } from "@/Components/ui/button";
 import { FormWrapper } from "@/Components/ui/form";
 import { Input, InputError } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import { storeImages } from "@/Service/files";
 
 const Create = () => {
     const { data, setData, errors, post, processing, clearErrors } = useForm({
         name: "",
         logo: "",
     });
+
+    const handleImageUpload = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const files = e.target.files;
+        if (!files || !files.length) return;
+
+        const formData = new FormData();
+
+        Array.from(files).map((file) => {
+            formData.append("image", file);
+        });
+
+        const response = await storeImages(formData);
+        setData("logo", response);
+
+        e.target.value = "";
+    };
 
     const submitHandler = (e: React.FormEvent) => {
         e.preventDefault();
@@ -43,9 +62,22 @@ const Create = () => {
 
                 <div className="space-y-1 col-span-3">
                     <Label>Uploader logo de brand</Label>
-                    <Input type="file" accept="image/png, image/jpeg" />
+                    <Input
+                        type="file"
+                        accept="image/png, image/jpeg"
+                        onChange={handleImageUpload}
+                    />
                     <InputError message={errors.logo} />
                 </div>
+
+                {data.logo && (
+                    <div
+                        className="relative shrink-0 hover:opacity-50 transition-opacity duration-150 cursor-pointer"
+                        onClick={() => setData("logo", "")}
+                    >
+                        <img src={data.logo} className="h-24 w-auto" />
+                    </div>
+                )}
 
                 <div className="col-span-3 flex items-center gap-4">
                     <Button

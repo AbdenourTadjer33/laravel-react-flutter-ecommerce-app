@@ -171,7 +171,6 @@ const ProductTable = ({ products }: { products: Pagination<Product> }) => {
                     },
                 }}
             />
-            id
         </TableWraper>
     );
 };

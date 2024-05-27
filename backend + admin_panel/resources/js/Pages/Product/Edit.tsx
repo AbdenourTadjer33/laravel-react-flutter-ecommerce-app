@@ -15,6 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
+import { storeImages } from "@/Service/files";
 
 const Edit = ({ product, brands }: { product: Product; brands: Brand[] }) => {
     const { data, setData, errors, clearErrors, processing, put } = useForm<{
@@ -35,7 +36,23 @@ const Edit = ({ product, brands }: { product: Product; brands: Brand[] }) => {
         brand_id: product.brand_id || "",
     });
 
-    console.log(product);
+    const handleImageUpload = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const files = e.target.files;
+        if (!files || !files.length) return;
+
+        const formData = new FormData();
+
+        Array.from(files).map((file) => {
+            formData.append("images[]", file);
+        });
+
+        const response = await storeImages(formData);
+        setData("images", [data.images, ...response]);
+
+        e.target.value = "";
+    };
 
     const submitHandler = (e: React.FormEvent) => {
         e.preventDefault();
@@ -115,9 +132,23 @@ const Edit = ({ product, brands }: { product: Product; brands: Brand[] }) => {
 
                 <div className="space-y-1 col-span-3">
                     <Label>Uploader les images de produits</Label>
-                    <Input type="file" accept="image/png, image/jpeg" />
+                    <Input type="file" accept="image/png, image/jpeg" multiple onChange={handleImageUpload} max={3} />
                     <InputError message={errors.images} />
                 </div>
+
+                {!!data.images.length && (
+                    <div className="flex items-center justify-start gap-4 overflow-auto col-span-3">
+                        {data.images.map((image, idx) => (
+                            <div
+                                key={idx}
+                                className="relative shrink-0 hover:opacity-50 transition-opacity duration-150 cursor-pointer"
+                                onClick={() => deleteImage(idx)}
+                            >
+                                <img src={image} className="h-28 w-auto" />
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <div className="col-span-3">
                     <Label className="inline-flex items-center gap-2">
