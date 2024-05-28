@@ -1,14 +1,25 @@
 import React from "react";
 import { useCart, Item, UseCartProps } from "@/hooks/useCart";
 
-const CartContext = React.createContext<UseCartProps>({
+export interface CartContextProps extends UseCartProps {
+  cartState: boolean;
+  setCartState: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const CartContext = React.createContext<CartContextProps>({
   items: [],
   add: (item: Item) => {},
   remove: (idx: keyof Item[]) => {},
+  update: (idx: keyof Item[], cart: (item: Item) => Item) => {},
+  addItems: (items: Item[]) => {},
+  cartState: false,
+  setCartState: () => {},
+  removeAll: () => {},
 });
 
 const CartContextProvider = ({ children }) => {
-  const { items, add, remove } = useCart();
+  const { items, add, remove, update, addItems, removeAll } = useCart();
+  const [cartState, setCartState] = React.useState(false);
 
   return (
     <CartContext.Provider
@@ -16,6 +27,11 @@ const CartContextProvider = ({ children }) => {
         items,
         add,
         remove,
+        update,
+        addItems,
+        cartState,
+        setCartState,
+        removeAll,
       }}
     >
       {children}

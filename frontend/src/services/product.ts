@@ -8,7 +8,13 @@ export type Product = {
     price: string;
     images: string[];
     brand?: string;
+    sizes: string[];
 };
+
+export interface CartProduct extends Product {
+    qte: number;
+    size: string | number | undefined;
+}
 
 async function getProducts(): Promise<Product[]> {
     const response = await axios.get(route("api.product.index"));
@@ -20,7 +26,7 @@ async function getProduct(slug: string): Promise<Product> {
     return await response.data;
 }
 
-async function getCart(items: Item[]): Promise<Product[]> {
+async function getCart(items: Item[]): Promise<CartProduct[]> {
     const response = await axios.post(route('api.cart'), { cart: items });
     return await response.data;
 }

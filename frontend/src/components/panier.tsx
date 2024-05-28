@@ -1,87 +1,65 @@
 import React from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { CartContext } from "@/contexts/cartContext";
 import { Button } from "./ui/button";
 import { FiShoppingBag } from "react-icons/fi";
-import { CartContext } from "@/contexts/cartContext";
 import { useQuery } from "@tanstack/react-query";
-import { getCart, Product } from "@/services/product";
+import { getCart } from "@/services/product";
 import { Link } from "@tanstack/react-router";
 import { Minus, Plus } from "lucide-react";
+import { MdDelete } from "react-icons/md";
 import { currencyFormat } from "@/lib/utils";
 
 const Cart = () => {
-  const [open, setOpen] = React.useState(false);
-
+  const { cartState, setCartState } = React.useContext(CartContext);
   return (
-    <>
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>
-          <Button variant="ghost" className="w-8 h-8 p-0">
-            <FiShoppingBag className="w-7 h-7 text-blue-800" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent className="p-0 flex h-full flex-col">
-          <CartItems setOpen={setOpen} />
-        </SheetContent>
-      </Sheet>
-    </>
+    <Sheet open={cartState} onOpenChange={setCartState}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" className="w-8 h-8 p-0">
+          <FiShoppingBag className="w-7 h-7 text-blue-800" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent className="p-0 flex h-full flex-col">
+        <CartItems />
+      </SheetContent>
+    </Sheet>
   );
 };
 
-const CartItems = ({ setOpen }) => {
+const CartItems = () => {
   const { items, addItems } = React.useContext(CartContext);
-  const { data: products } = useQuery({ queryKey: ["cart"], queryFn: async () => getCart(items) });
+  const { data: products } = useQuery({ queryKey: ["cart", items], queryFn: async () => getCart(items) });
 
   React.useEffect(() => {
     if (!products) return;
     const newCartItems = products.map((product) => {
-      return { slug: product.slug, qte: product.qte, size: product.size };
+      return {
+        slug: product.slug,
+        qte: product.qte,
+        size: product.size,
+      };
     });
 
-    if (newCartItems.length) {
-      addItems(newCartItems);
-    }
+    addItems(newCartItems);
   }, [products]);
 
   return (
     <>
-      <div className="flex-1 overflow-y-auto mt-5 py-6">
+      <div className="flex-1 overflow-y-auto mt-5 py-5">
         {!products || !products.length ? (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  ">
-            <img />
-            Votre panier est vide
-          </div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">Votre panier est vide</div>
         ) : (
-          <>
-            {products.map((product, idx) => (
-              <CartItem key={idx} idx={idx} product={product} />
-            ))}
-            
-            <div className="border-t border-gray-200 px-4 py-6 ">
-              <div className="mt-4">
-                <Button variant="secondary" className="w-full">
-                  Continue
-                </Button>
-              </div>
-              <div className="flex justify-center text-center text-sm text-gray-500">
-                <p>
-                  ou
-                  <Button variant="link" onClick={() => setOpen(false)}>
-                    Continue Shopping
-                    <span aria-hidden="true"> &rarr;</span>
-                  </Button>
-                </p>
-              </div>
-            </div>
-          </>
+          products.map((product, idx) => <CartItem key={idx} idx={idx} product={product} />)
         )}
       </div>
+
+      {products && !!products.length && <Summary products={products} />}
     </>
   );
 };
 
-const CartItem = ({ product, idx }: { product: Product; idx: number }) => {
-  const { items, update } = React.useContext(CartContext);
+const CartItem = ({ idx, product }) => {
+  const { items, update, remove } = React.useContext(CartContext);
   const [qte, setQte] = React.useState(items[idx].qte);
 
   const handleQteChange = (newQte: number) => {
@@ -102,14 +80,24 @@ const CartItem = ({ product, idx }: { product: Product; idx: number }) => {
 
       <div className="ml-4 flex flex-1 flex-col">
         <div className="space-y-3">
-          <div className="flex flex-col text-base font-medium text-gray-900">
+          <div className="flex justify-between items-center text-base font-medium text-gray-900">
             <Link>
               <h3 className="text-base font-medium pe-5">{product.name}</h3>
             </Link>
+            <Button
+              variant="destructive"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => {
+                remove(idx);
+              }}
+            >
+              <MdDelete className="w-4 h-4" />
+            </Button>
           </div>
           <hr />
           <div className="mt-1 text-sm text-gray-500 relative">
-            <p className="text-base text-gray-500 font-medium">{product.price}</p>
+            <p className="text-sm text-gray-500 font-medium">{currencyFormat(product.price)}</p>
           </div>
         </div>
         <div className="flex flex-1 items-center justify-between text-sm mt-3">
@@ -149,6 +137,40 @@ const CartItem = ({ product, idx }: { product: Product; idx: number }) => {
             className="absolute top-3 right-2 font-medium text-info-600 hover:text-info-500"
           ></button>
         </div>
+      </div>
+    </div>
+  );
+};
+
+const Summary = ({ products }) => {
+  const { setCartState } = React.useContext(CartContext);
+  const total = React.useMemo(() => {
+    let helper = 0;
+    products.forEach(({ total }) => {
+      helper += total;
+    });
+    return helper;
+  }, [products]);
+
+  return (
+    <div className="border-t border-gray-200 px-4 py-6 ">
+      <div className="flex justify-between text-base font-medium text-gray-900">
+        <p>Total</p>
+        <p>{currencyFormat(total)}</p>
+      </div>
+      <div className="mt-4">
+        <Button variant="secondary" className="w-full" asChild>
+          <Link to="/order/create">Continue ma commande</Link>
+        </Button>
+      </div>
+      <div className="flex justify-center text-center text-sm text-gray-500">
+        <p>
+          ou
+          <Button variant="link" onClick={() => setCartState(false)}>
+            Continuer vos achats
+            <span aria-hidden="true"> &rarr;</span>
+          </Button>
+        </p>
       </div>
     </div>
   );
