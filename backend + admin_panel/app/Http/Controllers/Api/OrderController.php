@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\CartService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Client;
 
 $arr = [
     'products' => []
@@ -29,12 +30,17 @@ class OrderController extends Controller
         ]);
 
         $order = DB::transaction(function () use ($request, $cartService) {
-            /** @var Order */
-            $order = Order::create([
+
+            /** @var Client */
+            $client = Client::create([
                 'name' => $request->input('name'),
                 'phone' => $request->input('phone'),
                 'email' => $request->input('email'),
                 'address' => $request->input('address'),
+            ]);
+
+            /** @var Order */
+            $order = $client->orders()->create([
                 'total' => $cartService->totalCart(),
             ]);
 
