@@ -1,31 +1,39 @@
-import OrderTable from "@/Components/Tables/OrderTable";
+import React from "react";
 import { Button } from "@/Components/ui/button";
 import { Heading } from "@/Components/ui/heading";
 import { Text } from "@/Components/ui/paragraph";
 import AuthLayout from "@/Layouts/AuthLayout";
-import { Order, Pagination } from "@/types";
+import { Admin, Pagination } from "@/types";
 import { Head, Link } from "@inertiajs/react";
-import React from "react";
 import { MdAdd } from "react-icons/md";
+import AdminTable from "@/Components/Tables/AdminTable";
 
-const Index = ({ orders }: { orders: Pagination<Order> }) => {
+const Index = ({ admins }: { admins: Pagination<Admin> }) => {
     return (
         <AuthLayout>
-            <Head title="Gestion de commande" />
+            <Head title="Gestion d'administrateur" />
+
             <div className="space-y-4">
                 <div className="flex sm:flex-row flex-col justify-between sm:items-end gap-4">
                     <div className="space-y-2">
                         <Heading level={3} className="font-medium">
-                            Gestion de commande
+                            Gestion de produits
                         </Heading>
 
                         <Text className={"max-w-7xl"}>
-                            Ici vous pouvez gérer les commande
+                            Ici vous pouvez gérer les administrateur
                         </Text>
                     </div>
+
+                    <Button asChild>
+                        <Link href={route("admin.admin.create")}>
+                            <MdAdd className="w-4 h-4 mr-2" />
+                            Ajouter un admin
+                        </Link>
+                    </Button>
                 </div>
 
-                <OrderTable orders={orders} />
+                <AdminTable admins={admins} />
             </div>
         </AuthLayout>
     );

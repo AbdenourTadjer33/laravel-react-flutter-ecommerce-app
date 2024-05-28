@@ -21,7 +21,7 @@ const Index = ({ products }: { products: Pagination<Product> }) => {
                         </Heading>
 
                         <Text className={"max-w-7xl"}>
-                            Ici vous pouvez gérer tous les produits
+                            Ici vous pouvez gérer les produits
                         </Text>
                     </div>
 

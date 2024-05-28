@@ -5,7 +5,8 @@ import { Button } from "@/Components/ui/button";
 import { FormWrapper } from "@/Components/ui/form";
 import { Input, InputError } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import { store } from "@/Service/files";
+import { destroy, store } from "@/Service/files";
+import { MdDelete } from "react-icons/md";
 
 const Create = () => {
     const { data, setData, errors, post, processing, clearErrors } = useForm({
@@ -25,10 +26,19 @@ const Create = () => {
             formData.append("image", file);
         });
 
+        if (data.logo) {
+            await deleteImage(data.logo);
+        }
+
         const response = await store(formData);
         setData("logo", response);
 
         e.target.value = "";
+    };
+
+    const deleteImage = async (id: string) => {
+        setData("logo", "");
+        await destroy(id);
     };
 
     const submitHandler = (e: React.FormEvent) => {
@@ -71,11 +81,16 @@ const Create = () => {
                 </div>
 
                 {data.logo && (
-                    <div
-                        className="relative shrink-0 hover:opacity-50 transition-opacity duration-150 cursor-pointer"
-                        onClick={() => setData("logo", "")}
-                    >
+                    <div className="relative shrink-0 group">
                         <img src={data.logo} className="h-24 w-auto" />
+                        <Button
+                            size="icon"
+                            variant="destructive"
+                            className="absolute bottom-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => deleteImage(data.logo)}
+                        >
+                            <MdDelete className="w-5 h-5" />
+                        </Button>
                     </div>
                 )}
 
@@ -86,7 +101,7 @@ const Create = () => {
                         asChild
                         disabled={processing}
                     >
-                        <Link href={route("admin.product.index")}>Annuler</Link>
+                        <Link href={route("admin.brand.index")}>Annuler</Link>
                     </Button>
                     <Button
                         variant="default"

@@ -71,4 +71,8 @@ class Product extends Model
     {
         $query->where('status', true);
     }
+
+    public function scopeDisabled(Builder $query) {
+        $query->where('status', false);
+    }
 }

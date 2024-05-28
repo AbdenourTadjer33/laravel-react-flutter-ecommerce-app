@@ -57,7 +57,9 @@ const Create = ({ brands }: { brands: Brand[] }) => {
     };
 
   const deleteImage = async (id: string, idx: number) => {
-      setData("images", data.images.splice(idx, 1));
+      const images = [...data.images];
+      images.splice(idx, 1);
+      setData("images", images);
       await destroy(id);
   };
 

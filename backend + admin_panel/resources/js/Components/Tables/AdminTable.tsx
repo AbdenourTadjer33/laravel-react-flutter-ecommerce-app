@@ -1,12 +1,14 @@
 import React from "react";
-import { Pagination, Product } from "@/types";
+import { Admin, Pagination } from "@/types";
+import { Link, router } from "@inertiajs/react";
 import {
     createColumnHelper,
     getCoreRowModel,
     Row,
     useReactTable,
 } from "@tanstack/react-table";
-import DataTable from "../ui/datatable";
+import dayjs from "dayjs";
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -17,7 +19,6 @@ import {
 import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { TableWraper } from "../ui/table";
-import { Link, router } from "@inertiajs/react";
 import { MdDelete, MdEdit } from "react-icons/md";
 import {
     Dialog,
@@ -27,67 +28,54 @@ import {
     DialogDescription,
 } from "../ui/dialog";
 import { FaInfoCircle } from "react-icons/fa";
-import { Indicator } from "../ui/indicator";
+import DataTable from "../ui/datatable";
 
-const columnHelper = createColumnHelper<Product>();
+const columnHelper = createColumnHelper<Admin>();
 
 const columnDef = [
     columnHelper.accessor("id", {
         header: "id",
     }),
-
     columnHelper.accessor("name", {
-        header: "produit",
+        header: "name",
     }),
-
-    columnHelper.accessor("description", {
-        header: "description",
-        cell: ({ getValue }) => <p className="truncate">{getValue()}</p>,
+    columnHelper.accessor("email", {
+        header: "email",
     }),
-
-    columnHelper.accessor("sizes", {
-        header: "pointeur disponible",
-    }),
-
     columnHelper.accessor("status", {
         header: "status",
-        cell: ({ getValue }) => <Indicator color={getValue()} />,
+        cell: ({ getValue }) => (getValue() ? <>Active</> : <>non-active</>),
     }),
-
-    columnHelper.accessor("brand", {
-        header: "brand",
-        cell: ({ getValue }) => <>{getValue() ? getValue() : null}</>,
+    columnHelper.accessor("createdAt", {
+        header: "créer le",
+        cell: ({ getValue }) => (
+            <>{dayjs(getValue()).format("DD/MM/YYYY HH:mm")}</>
+        ),
     }),
-
-    columnHelper.accessor("price", {
-        header: "prix",
-        cell: ({ getValue }) => <>{getValue() + "DA"}</>,
-    }),
-
     columnHelper.display({
         id: "actions",
         cell: ({ row }) => <Actions row={row} />,
     }),
 ];
 
-const Actions = ({ row }: { row: Row<Product> }) => {
+const Actions = ({ row }: { row: Row<Admin> }) => {
     const [beforeDeleteModal, setBeforeDeleteModal] = React.useState(false);
 
-    const deleteProduct = (id: string) => {
-        router.delete(route("admin.product.destroy", id), {
+    const deleteAdmin = (id: string) => {
+        router.delete(route("admin.admin.destroy", id), {
             preserveScroll: true,
             onSuccess: () => setBeforeDeleteModal(false),
         });
     };
 
-    const activeProduct = (id: string) => {
-        router.post(route("admin.product.active", id), undefined, {
+    const activeAdmin = (id: string) => {
+        router.post(route("admin.admin.active", id), undefined, {
             preserveScroll: true,
         });
     };
 
-    const disableProduct = (id: string) => {
-        router.post(route("admin.product.disable", id), undefined, {
+    const disableAdmin = (id: string) => {
+        router.post(route("admin.admin.disable", id), undefined, {
             preserveScroll: true,
         });
     };
@@ -101,13 +89,19 @@ const Actions = ({ row }: { row: Row<Product> }) => {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => {
+                            row.original.status
+                                ? disableAdmin(row.id)
+                                : activeAdmin(row.id);
+                        }}
+                    >
                         {row.original.status ? "Déactiver" : "Activé"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                         <Link
-                            href={route("admin.product.edit", row.id)}
+                            href={route("admin.admin.edit", row.id)}
                             className="flex items-center gap-2"
                         >
                             <MdEdit className="w-4 h-4" />
@@ -149,7 +143,7 @@ const Actions = ({ row }: { row: Row<Product> }) => {
                         </Button>
                         <Button
                             variant="destructive"
-                            onClick={() => deleteProduct(row.id)}
+                            onClick={() => deleteAdmin(row.id)}
                         >
                             Supprimer
                         </Button>
@@ -160,23 +154,24 @@ const Actions = ({ row }: { row: Row<Product> }) => {
     );
 };
 
-const ProductTable = ({ products }: { products: Pagination<Product> }) => {
-    const finalData = React.useMemo(() => products.data, [products.data]);
+const AdminTable = ({ admins }: { admins: Pagination<Admin> }) => {
+    const finaleData = React.useMemo(() => admins.data, [admins.data]);
     const finalPagination = React.useMemo(() => {
         return {
-            links: products.links,
-            meta: products.meta,
+            links: admins.links,
+            meta: admins.meta,
         };
-    }, [products.meta, products.links]);
+    }, [admins.meta, admins.links]);
     const finaleColumnDef = React.useMemo(() => columnDef, []);
 
     const table = useReactTable({
-        data: finalData,
+        data: finaleData,
         columns: finaleColumnDef,
         getCoreRowModel: getCoreRowModel(),
-        getRowId: (row) => row.slug,
+        getRowId: (row) => row.id,
         manualPagination: true,
     });
+
     return (
         <TableWraper>
             <div className="p-4"></div>
@@ -190,4 +185,4 @@ const ProductTable = ({ products }: { products: Pagination<Product> }) => {
     );
 };
 
-export default ProductTable;
+export default AdminTable;

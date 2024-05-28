@@ -5,26 +5,50 @@ namespace App\Http\Controllers\Admin;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\OrderResource;
+use App\Models\Order;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Order/Index');
+        $orders = Order::with('client', 'products.brand')->latest()->paginate(20);
+
+        return Inertia::render('Order/Index', [
+            'orders' => OrderResource::collection($orders),
+        ]);
     }
 
-    public function confirm()
+    public function confirm(Order $order)
     {
-        return redirect(route('admin.order.index'));
+        $order->update([
+            'status' => 'confirmé',
+        ]);
+
+        return redirect(route('admin.order.index'))->with('alert', [
+            'status' => 'success',
+            'message' => 'Commande confirmé avec succés',
+        ]);
     }
 
-    public function refuse()
+    public function cancel(Order $order)
     {
-        return redirect(route('admin.order.index'));
+        $order->update(([
+            'status' => 'annuler',
+        ]));
+
+        return redirect(route('admin.order.index'))->with('alert', [
+            'status' => 'success',
+            'message' => 'Commande annuler avec succés',
+        ]);
     }
 
-    public function delete()
+    public function destroy(Order $order)
     {
-        return redirect(route('admin.order.index'));
+        $order->delete();
+        return redirect(route('admin.order.index'))->with('alert', [
+            'status' => 'success',
+            'message' => 'Commande supprimé avec succés',
+        ]);
     }
 }
