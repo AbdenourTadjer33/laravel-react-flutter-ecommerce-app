@@ -38,7 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->redirectGuestsTo('/login');
 
-        $middleware->redirectUsersTo('/admin');
+        $middleware->redirectUsersTo('/app');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -32,12 +32,16 @@ export type Product = {
     images?: string[];
     brand_id?: string;
     brand?: string;
+    count?: number;
+    createdAt: string;
 };
 
 export type Brand = {
     id: string;
     name: string;
     logo: string;
+    createdAt?: string;
+    count?: number;
 }
 
 export type Order = {

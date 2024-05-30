@@ -1,5 +1,6 @@
 import { Order, Pagination } from "@/types";
 import {
+    ColumnDef,
     createColumnHelper,
     getCoreRowModel,
     getExpandedRowModel,
@@ -35,6 +36,7 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { Link, router } from "@inertiajs/react";
 import { FaInfoCircle } from "react-icons/fa";
+import { columnDef as productColumnDef } from "./ProductTable";
 
 const columnHelper = createColumnHelper<Order>();
 
@@ -202,11 +204,11 @@ const OrderTable = ({ orders }: { orders: Pagination<Order> }) => {
     const finalPagination = React.useMemo(() => {
         return { links: orders.links, meta: orders.meta };
     }, [orders.links, orders.meta]);
-    const finaleColumnDef = React.useMemo(() => columnDef, []);
+    const finalColumnDef = React.useMemo(() => columnDef, []);
 
     const table = useReactTable({
         data: finalData,
-        columns: finaleColumnDef,
+        columns: finalColumnDef,
         getCoreRowModel: getCoreRowModel(),
         getRowId: (row) => row.ref,
         getRowCanExpand: () => true,
@@ -218,8 +220,34 @@ const OrderTable = ({ orders }: { orders: Pagination<Order> }) => {
         const order = row.original;
 
         return (
-            <div className="flex flex-wrap gap-2">
-                <pre>{JSON.stringify(order, null, 2)}</pre>
+            <div className="flex flex-wrap gap-2 max-w-2xl ">
+                <ul className="flex-col border p-2 ">
+                    <li className="grid grid-cols-4 py-2 border-b space-x-4">
+                        <span>Produit</span>
+                        <span>Prix</span>
+                        <span>Quantité</span>
+                        <span>Total</span>
+                    </li>
+                    {order.products.map((product) => {
+                        return (
+                            <li
+                                key={product.id}
+                                className="grid grid-cols-4 gap-4 py-2 border-b"
+                            >
+                                <span>{product.name}</span>
+                                <span>{currencyFormat(product.price)}</span>
+                                <span>{product.qte} pcs</span>
+                                <span>{currencyFormat(product.total)}</span>
+                            </li>
+                        );
+                    })}
+                    <li className="grid grid-cols-4 gap-4 py-2">
+                        <span></span>
+                        <span></span>
+                        <span>Total :</span>
+                        <span>{currencyFormat(order.total)}</span>
+                    </li>
+                </ul>
             </div>
         );
     };

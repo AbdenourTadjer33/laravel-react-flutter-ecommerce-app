@@ -27,6 +27,7 @@ import {
     DialogDescription,
 } from "../ui/dialog";
 import { FaInfoCircle } from "react-icons/fa";
+import dayjs from "dayjs";
 
 const columnHelper = createColumnHelper<Brand>();
 
@@ -37,6 +38,17 @@ const columnDef = [
 
     columnHelper.accessor("name", {
         header: "brand",
+    }),
+
+    columnHelper.accessor("count", {
+        header: "nb produit",
+    }),
+
+    columnHelper.accessor("createdAt", {
+        header: "créer le",
+        cell: ({ getValue }) => {
+            return <>{dayjs(getValue()).format("DD/MM/YYYY H:mm")}</>;
+        },
     }),
 
     columnHelper.display({

@@ -28,25 +28,35 @@ import {
 } from "../ui/dialog";
 import { FaInfoCircle } from "react-icons/fa";
 import { Indicator } from "../ui/indicator";
+import { BiArrowFromBottom, BiArrowToBottom } from "react-icons/bi";
+import { ShowMore } from "../ui/ShowMore";
+import dayjs from "dayjs";
 
 const columnHelper = createColumnHelper<Product>();
 
-const columnDef = [
+export const columnDef = [
     columnHelper.accessor("id", {
         header: "id",
     }),
 
     columnHelper.accessor("name", {
         header: "produit",
+        cell: ({ getValue }) => <ShowMore>{getValue()}</ShowMore>,
     }),
 
     columnHelper.accessor("description", {
         header: "description",
-        cell: ({ getValue }) => <p className="truncate">{getValue()}</p>,
+        cell: ({ getValue }) => <ShowMore>{getValue()}</ShowMore>,
     }),
 
     columnHelper.accessor("sizes", {
-        header: "pointeur disponible",
+        header: "taille disponible",
+    }),
+
+    columnHelper.accessor("count", {
+        header: "nb commande",
+        cell: ({ getValue }) =>
+            getValue() ? <>{getValue()} pcs</> : getValue(),
     }),
 
     columnHelper.accessor("status", {
@@ -62,6 +72,13 @@ const columnDef = [
     columnHelper.accessor("price", {
         header: "prix",
         cell: ({ getValue }) => <>{getValue() + "DA"}</>,
+    }),
+
+    columnHelper.accessor("createdAt", {
+        header: "créer le",
+        cell: ({ getValue }) => {
+            return <>{dayjs(getValue()).format("DD/MM/YYYY H:mm")}</>;
+        },
     }),
 
     columnHelper.display({
@@ -101,8 +118,25 @@ const Actions = ({ row }: { row: Row<Product> }) => {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    <DropdownMenuItem>
-                        {row.original.status ? "Déactiver" : "Activé"}
+                    <DropdownMenuItem
+                        className="flex items-center gap-2"
+                        onClick={() =>
+                            row.original.status
+                                ? disableProduct(row.id)
+                                : activeProduct(row.id)
+                        }
+                    >
+                        {row.original.status ? (
+                            <>
+                                <BiArrowFromBottom className="w-4 h-4" />
+                                Déactiver
+                            </>
+                        ) : (
+                            <>
+                                <BiArrowToBottom className="w-4 h-4" />
+                                Activé
+                            </>
+                        )}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>

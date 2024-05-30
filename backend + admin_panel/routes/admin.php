@@ -15,6 +15,9 @@ Route::model('admin', User::class);
 Route::resource('admin', AdminController::class)->names('admin');
 
 Route::resource('brands', BrandController::class)->names('brand');
+
+Route::post('/products/{product:slug}/active', [ProductController::class, 'active'])->name('product.active');
+Route::post('product/{product:slug}/disable', [ProductController::class, 'disable'])->name('product.disable');
 Route::resource('products', ProductController::class)->names('product');
 
 Route::post('/orders/{order:ref}/confirm/', [OrderController::class, 'confirm'])->name('order.confirm');

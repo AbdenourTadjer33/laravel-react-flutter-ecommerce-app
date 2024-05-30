@@ -2,26 +2,26 @@
 
 namespace App\Mail;
 
-use App\Models\Client;
 use App\Models\Order;
+use App\Models\Client;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NewOrderMail extends Mailable
+class NewOrder extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $client;
-    public $order;
-
-    public function __construct(Client $client, Order $order)
-    {
-        $this->client = $client;
-        $this->order = $order;
+    /**
+     * Create a new message instance.
+     */
+    public function __construct(
+        public Client $client,
+        public Order $order,
+    ) {
     }
 
     /**
@@ -30,7 +30,7 @@ class NewOrderMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Nouvelle commande',
+            subject: 'Confirmation de votre commande n°' . $this->order?->ref,
         );
     }
 
@@ -40,7 +40,7 @@ class NewOrderMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'email.new-order',
+            markdown: 'email/new-order',
         );
     }
 

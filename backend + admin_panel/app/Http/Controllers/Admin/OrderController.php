@@ -22,7 +22,7 @@ class OrderController extends Controller
     public function confirm(Order $order)
     {
         $order->update([
-            'status' => 'confirmé',
+            'status' => 'confirmer',
         ]);
 
         return redirect(route('admin.order.index'))->with('alert', [
