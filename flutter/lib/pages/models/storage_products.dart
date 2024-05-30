@@ -7,6 +7,7 @@ class StorageProducts {
   final String name;
   final double price;
   int qts;
+  String image;
 
   StorageProducts({
     required this.slug,
@@ -14,6 +15,7 @@ class StorageProducts {
     required this.name,
     required this.price,
     required this.qts,
+    required this.image,
   });
 
   // Convert Product object to JSON
@@ -24,6 +26,7 @@ class StorageProducts {
       'name': name,
       'price': price,
       'qts': qts,
+      'image': image,
     };
   }
 
@@ -35,18 +38,19 @@ class StorageProducts {
       name: json['name'],
       price: json['price'],
       qts: json['qts'],
+      image: json['image'],
     );
   }
 }
 
 Future<void> addProductToStorage(
-    String slug, String selectedSize, String name, price, int qts) async {
+    String slug, String selectedSize, String name, price, int qts, image) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   List<String>? productsJson = prefs.getStringList('products') ?? [];
 
   StorageProducts newProduct = StorageProducts(
-      slug: slug, selectedSize: selectedSize, name: name, price: price, qts : qts);
+      slug: slug, selectedSize: selectedSize, name: name, price: price, qts : qts, image : image);
 
   productsJson.add(json.encode(newProduct.toJson()));
 

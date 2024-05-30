@@ -4,6 +4,7 @@ class Product {
   final String description;
   final double price;
   final List sizes;
+  final List images;
 
   Product({
     required this.slug,
@@ -11,6 +12,7 @@ class Product {
     required this.description,
     required this.price,
     required this.sizes,
+    required this.images,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,12 @@ class Product {
               ? json['price'] as double
               : double.tryParse(json['price']?.toString() ?? '0') ?? 0.0,
       sizes: json['sizes'] as List<dynamic>,
+      images: _transformImageUrls(
+          List<String>.from(json['images'] as List<dynamic>)),
     );
+  }
+
+  static List<String> _transformImageUrls(List<String> urls) {
+    return urls.map((url) => url.replaceAll('localhost', '10.0.2.2')).toList();
   }
 }

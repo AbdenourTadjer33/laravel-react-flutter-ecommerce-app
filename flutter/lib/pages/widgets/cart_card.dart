@@ -27,7 +27,7 @@ class _CartCardState extends State<CartCard> {
       _quantity++;
       updateProductQuantityInStorage(
           widget.product.slug, widget.product.selectedSize, _quantity);
-      widget.onUpdatePrice(widget.product.price, '+' );
+      widget.onUpdatePrice(widget.product.price, '+');
     });
   }
 
@@ -37,7 +37,7 @@ class _CartCardState extends State<CartCard> {
         _quantity--;
         updateProductQuantityInStorage(
             widget.product.slug, widget.product.selectedSize, _quantity);
-        widget.onUpdatePrice(widget.product.price , '-');
+        widget.onUpdatePrice(widget.product.price, '-');
       });
     }
   }
@@ -61,7 +61,7 @@ class _CartCardState extends State<CartCard> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   image: DecorationImage(
-                    image: AssetImage('assets/image_shoes.png'),
+                    image: NetworkImage(widget.product.image),
                   ),
                 ),
               ),

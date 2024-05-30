@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:shamo/theme.dart';
 import '../models/product_model.dart';
 
-
 class ProductCard extends StatelessWidget {
   final Product product;
-  const ProductCard({super.key,  required this.product});
-  
+  const ProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +34,14 @@ class ProductCard extends StatelessWidget {
             SizedBox(
               height: 30,
             ),
-            Image.asset(
-              'assets/image_shoes.png',
-              width: 215,
-              height: 150,
-              fit: BoxFit.cover,
+            AspectRatio(
+              aspectRatio: 16 / 9, // You can adjust the aspect ratio as needed
+              child: Image.network(
+                product.images[0],
+                width: 215,
+                height: 150,
+                fit: BoxFit.cover,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
