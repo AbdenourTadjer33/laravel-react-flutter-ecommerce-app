@@ -56,10 +56,12 @@ const Create = ({ brands }: { brands: Brand[] }) => {
         e.target.value = "";
     };
 
-    const deleteImage = async (id: string, idx: number) => {
-        setData("images", data.images.splice(idx, 1));
-        await destroy(id);
-    };
+  const deleteImage = async (id: string, idx: number) => {
+      const images = [...data.images];
+      images.splice(idx, 1);
+      setData("images", images);
+      await destroy(id);
+  };
 
     const submitHandler = (e: React.FormEvent) => {
         e.preventDefault();

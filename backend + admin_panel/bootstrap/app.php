@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function () {
             Route::middleware(['web', 'auth'])
-                ->prefix('admin')
+                ->prefix('app')
                 ->as('admin.')
                 ->group(base_path('routes/admin.php'));
 
@@ -38,7 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->redirectGuestsTo('/login');
 
-        $middleware->redirectUsersTo('/admin');
+        $middleware->redirectUsersTo('/app');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -1,3 +1,4 @@
+import React from "react";
 import { getProducts } from "@/services/product";
 import { createFileRoute } from "@tanstack/react-router";
 import { Card } from "@/components/product/card";
@@ -6,7 +7,6 @@ import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { getBrand, getBrands } from "@/services/brand";
-import React from "react";
 
 export const Route = createFileRoute("/")({
   loader: getProducts,

@@ -13,6 +13,14 @@ export type PageProps<
     };
 };
 
+export type Admin = {
+    id: string;
+    name: string;
+    email: string;
+    status: boolean;
+    createdAt: string;
+}
+
 export type Product = {
     id: string;
     slug: string;
@@ -24,12 +32,39 @@ export type Product = {
     images?: string[];
     brand_id?: string;
     brand?: string;
+    count?: number;
+    createdAt: string;
 };
 
 export type Brand = {
     id: string;
     name: string;
     logo: string;
+    createdAt?: string;
+    count?: number;
+}
+
+export type Order = {
+    ref: string;
+    total: string;
+    status: string;
+    createdAt: string;
+    client: {
+        name: string;
+        email: string;
+        phone: string;
+        address: string;
+    }, 
+    products: {
+        slug: string;
+        name: string; 
+        brand: string;
+        price: string;
+        images: string[];
+        qte: number;
+        size: string;
+        total: string;
+    }[]
 }
 
 export interface Pagination<TData> {

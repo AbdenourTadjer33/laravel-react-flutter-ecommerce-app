@@ -14,6 +14,11 @@ class BrandResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => (string) $this->id,
+            'name' => $this->name,
+            'count' => $this->products_count,
+            'createdAt' => $this->created_at,
+        ];
     }
 }

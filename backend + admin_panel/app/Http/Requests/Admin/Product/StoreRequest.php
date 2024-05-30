@@ -30,7 +30,7 @@ class StoreRequest extends FormRequest
             'sizes' => ['required', 'array', 'min:1'],
             'sizes.*' => ['required', 'numeric'],
             'brand_id' => ['required', Rule::exists('brands', 'id')],
-            'images' => ['required', 'array', 'max:3'],
+            'images' => ['required', 'array', 'max:4'],
             'images.*' => ['required', 'string', 'url'],
         ];
     }

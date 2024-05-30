@@ -16,8 +16,9 @@ class BrandController extends Controller
      */
     public function index()
     {
+        $brands = BrandResource::collection(Brand::withCount('products')->paginate(40));
         return Inertia::render('Brand/Index', [
-            "brands" => BrandResource::collection(Brand::paginate(40)),
+            'brands' => $brands,
         ]);
     }
 
