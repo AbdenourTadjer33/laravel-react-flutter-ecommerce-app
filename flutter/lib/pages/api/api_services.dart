@@ -8,7 +8,6 @@ class ApiService {
   static Future<dynamic> getRequest(String endpoint) async {
     final url = Uri.parse('$baseUrl/$endpoint');
     final response = await http.get(url);
-
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -19,9 +18,9 @@ class ApiService {
   // POST request
   static Future<void> postRequest(String endpoint, dynamic data) async {
     final url = Uri.parse('$baseUrl/$endpoint');
-      final response = await http.post(url, body: json.encode(data), headers: {
+    final response = await http.post(url, body: json.encode(data), headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json' 
+      'Accept': 'application/json'
     });
 
     if (response.statusCode == 200) {

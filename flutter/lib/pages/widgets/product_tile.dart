@@ -27,39 +27,43 @@ class ProductTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                'assets/image_shoes.png',
-                width: 120,
-                height: 120,
-                fit: BoxFit.cover,
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  product.images[0],
+                  width: 120,
+                  height: 120,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             SizedBox(
               width: 12,
             ),
             Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 6),
-                Text(
-                  product.name,
-                  style: primaryTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: semiBold,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 6),
+                  Text(
+                    product.name,
+                    style: primaryTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: semiBold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                SizedBox(
-                  height: 6,
-                ),
-                Text(
-                  '${product.price} DA',
-                  style: priceTextStyle.copyWith(fontWeight: bold),
-                ),
-              ],
-            ))
+                  SizedBox(
+                    height: 6,
+                  ),
+                  Text(
+                    '${product.price} DA',
+                    style: priceTextStyle.copyWith(fontWeight: bold),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

@@ -11,36 +11,25 @@ class ProductPage extends StatefulWidget {
 
   const ProductPage({Key? key, required this.product}) : super(key: key);
 
-// ! product images
-  static const List images = [
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-  ];
-
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
   int currentIndex = 0;
+  String selectedSize = '';
 
-  // Define selected size
-  String selectedSize =  '';
-
-  // Function to update selected size
   void selectSize(String size) {
     setState(() {
       selectedSize = size;
     });
   }
 
-    @override
+  @override
   void initState() {
     super.initState();
     selectedSize = widget.product.sizes[0];
   }
-
 
   Widget sizeOptions(List<dynamic> availableSizes) {
     return Wrap(
@@ -75,8 +64,8 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-Future<void> showSuccessDialog(
-      String selectedSize, String slug, String name, double price) async {
+  Future<void> showSuccessDialog(String selectedSize, String slug, String name,
+      double price, String image) async {
     // Check if the product with the same slug and size exists in storage
     List<StorageProducts> products = await getProductsFromStorage();
     bool productExists = false;
@@ -93,7 +82,7 @@ Future<void> showSuccessDialog(
     if (!productExists) {
       // If the product doesn't exist, add it to storage with quantity 1
       int qts = 1;
-      await addProductToStorage(slug, selectedSize, name, price, qts);
+      await addProductToStorage(slug, selectedSize, name, price, qts, image);
     }
     return showDialog(
       context: context,
@@ -192,9 +181,9 @@ Future<void> showSuccessDialog(
           ),
         ),
         CarouselSlider(
-          items: ProductPage.images
+          items: widget.product.images
               .map(
-                (image) => Image.asset(
+                (image) => Image.network(
                   image,
                   width: MediaQuery.of(context).size.width,
                   height: 310,
@@ -214,7 +203,7 @@ Future<void> showSuccessDialog(
         SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: ProductPage.images.map((e) {
+          children: widget.product.images.map((e) {
             index++;
             return indicator(index);
           }).toList(),
@@ -351,8 +340,12 @@ Future<void> showSuccessDialog(
                     height: 54,
                     child: TextButton(
                       onPressed: () {
-                        showSuccessDialog(selectedSize, widget.product.slug,
-                            widget.product.name, widget.product.price);
+                        showSuccessDialog(
+                            selectedSize,
+                            widget.product.slug,
+                            widget.product.name,
+                            widget.product.price,
+                            widget.product.images[0]);
                       },
                       style: TextButton.styleFrom(
                         foregroundColor: primaryColor,

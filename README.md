@@ -52,6 +52,10 @@ To run this project locally, follow these steps:
    Laravel : 
    ```sh 
    `composer i`
+   `cp .env.example .env`
+   `php artisan key:generate`
+   `php artisan migrate`
+
 
    ```sh 
    React :
