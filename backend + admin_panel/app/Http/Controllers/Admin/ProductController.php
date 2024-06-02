@@ -52,7 +52,7 @@ class ProductController extends Controller
     {
         return Inertia::render('Product/Edit', [
             'product' => $product,
-            'brands' => CategoryResource::collection(Category::get()),
+            'categories' => CategoryResource::collection(Category::get()),
         ]);
     }
 

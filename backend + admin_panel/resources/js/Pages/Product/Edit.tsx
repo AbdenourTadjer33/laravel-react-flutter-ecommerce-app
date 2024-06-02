@@ -17,6 +17,7 @@ import {
 } from "@/Components/ui/select";
 import { destroy, store } from "@/Service/files";
 import { MdDelete } from "react-icons/md";
+import { ToggleGroup, ToggleGroupItem } from "@/Components/ui/toggle-group";
 
 const Edit = ({ product, categories }: { product: Product; categories: Category[] }) => {
     const { data, setData, errors, clearErrors, processing, put } = useForm<{
@@ -126,7 +127,7 @@ const Edit = ({ product, categories }: { product: Product; categories: Category[
                     <InputError message={errors.category_id} />
                 </div>
 
-                <div className="space-y-1 col-span-2">
+                <div className="space-y-1 col-span-3">
                     <Label>Description</Label>
                     <Textarea
                         value={data.description}
@@ -138,9 +139,38 @@ const Edit = ({ product, categories }: { product: Product; categories: Category[
                     <InputError message={errors.description} />
                 </div>
 
+                <div className="space-y-1 col-span-2">
+                    <Label>Séléctionnez les pointeur disponible</Label>
+                    <ToggleGroup
+                        variant="outline"
+                        type="multiple"
+                        value={data.sizes}
+                        onValueChange={(values) =>
+                            setData(
+                                "sizes",
+                                values.sort((a, b) => parseInt(a) - parseInt(b))
+                            )
+                        }
+                        className="justify-start"
+                    >
+                        {Array.from(
+                            { length: 10 },
+                            (_, index) => 36 + index
+                        ).map((idx) => (
+                            <ToggleGroupItem key={idx} value={String(idx)}>
+                                {idx}
+                            </ToggleGroupItem>
+                        ))}
+                    </ToggleGroup>
+                    <InputError message={errors.sizes} />
+                </div>
+
                 <div className="space-y-1">
                     <Label>Brand</Label>
-                    <Input value={data.brand} onChange={(e) => setData('brand', e.target.value)}/>
+                    <Input
+                        value={data.brand}
+                        onChange={(e) => setData("brand", e.target.value)}
+                    />
                 </div>
 
                 <div className="space-y-1 col-span-3">
