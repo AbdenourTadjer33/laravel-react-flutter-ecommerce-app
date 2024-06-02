@@ -46,5 +46,5 @@ axios.interceptors.response.use(
 window.axios = axios;
 
 router.on("invalid", (event) => {
-    // event.preventDefault();
+    event.preventDefault();
 });
