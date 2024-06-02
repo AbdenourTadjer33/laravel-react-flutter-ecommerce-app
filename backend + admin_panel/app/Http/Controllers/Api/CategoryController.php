@@ -3,20 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Brand;
-use Illuminate\Http\Request;
+use App\Models\Category;
 
-class BrandController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Brand::get();
+        return Category::get();
     }
 
-    public function show(Brand $brand)
+    public function show(Category $brand)
     {
         return $brand->load('products');
     }   

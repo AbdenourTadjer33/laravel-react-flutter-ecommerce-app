@@ -13,7 +13,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return ProductResource::collection(Product::active()->with('brand')->get());
+        return ProductResource::collection(Product::active()->with('category')->get());
     }
 
     /**
@@ -21,6 +21,6 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return new ProductResource($product->load('brand'));
+        return new ProductResource($product->load('category'));
     }
 }

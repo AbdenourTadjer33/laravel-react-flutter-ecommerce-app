@@ -36,7 +36,8 @@ class Product extends Model
         'status',
         'images',
         'sizes',
-        'brand_id',
+        'category_id',
+        'brand',
     ];
 
     protected function casts(): array
@@ -57,9 +58,9 @@ class Product extends Model
         );
     }
 
-    public function brand(): BelongsTo
+    public function category(): BelongsTo
     {
-        return $this->belongsTo(Brand::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function orders(): BelongsToMany

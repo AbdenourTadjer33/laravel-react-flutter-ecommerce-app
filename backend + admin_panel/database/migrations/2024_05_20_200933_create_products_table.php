@@ -20,6 +20,8 @@ return new class extends Migration
             $table->boolean('status');
             $table->json('images')->nullable();
             $table->json('sizes');
+            $table->string('brand')->nullable();
+            $table->foreignId('category_id')->nullable()->constrained('categories', 'id')->nullOnDelete();
             $table->timestamps();
         });
     }

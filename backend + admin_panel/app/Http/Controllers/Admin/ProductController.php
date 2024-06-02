@@ -4,19 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use Inertia\Inertia;
 use App\Models\Product;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Product\StoreRequest;
 use App\Http\Requests\Admin\Product\UpdateRequest;
-use App\Http\Resources\Admin\BrandResource;
+use App\Http\Resources\Admin\CategoryResource;
 use App\Http\Resources\Admin\ProductResource;
-use App\Models\Brand;
+use App\Models\Category;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::withCount('orders')->with('brand')->paginate(10);
+        $products = Product::withCount('orders')->with('category')->paginate(10);
 
         return Inertia::render('Product/Index', [
             'products' => ProductResource::collection($products)
@@ -26,7 +25,7 @@ class ProductController extends Controller
     public function create()
     {
         return Inertia::render('Product/Create', [
-            'brands' => BrandResource::collection(Brand::get()),
+            'brands' => CategoryResource::collection(Category::get()),
         ]);
     }
 
@@ -38,8 +37,9 @@ class ProductController extends Controller
             'price' => $request->input('price'),
             'status' => $request->input('status'),
             'images' => $request->input('images'),
-            'brand_id' => $request->input('brand_id'),
+            'category_id' => $request->input('category_id'),
             'sizes' => $request->input('sizes'),
+            'brand' => $request->input('brand'),
         ]);
 
         return redirect(route('admin.product.index'))->with('alert', [
@@ -52,7 +52,7 @@ class ProductController extends Controller
     {
         return Inertia::render('Product/Edit', [
             'product' => $product,
-            'brands' => BrandResource::collection(Brand::get()),
+            'brands' => CategoryResource::collection(Category::get()),
         ]);
     }
 
@@ -64,8 +64,9 @@ class ProductController extends Controller
             'price' => $request->input('price'),
             'status' => $request->input('status'),
             'images' => $request->input('images'),
-            'brand_id' => $request->input('brand_id'),
+            'category_id' => $request->input('category_id'),
             'sizes' => $request->input('sizes'),
+            'brand' => $request->input('brand'),
         ]);
 
         return redirect(route('admin.product.index'))->with('alert', [
