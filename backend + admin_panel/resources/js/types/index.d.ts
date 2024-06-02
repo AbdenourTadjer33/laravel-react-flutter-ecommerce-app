@@ -30,16 +30,15 @@ export type Product = {
     status: boolean;
     sizes: string[];
     images?: string[];
-    brand_id?: string;
+    category_id?: string;
     brand?: string;
     count?: number;
     createdAt: string;
 };
 
-export type Brand = {
+export type Category = {
     id: string;
     name: string;
-    logo: string;
     createdAt?: string;
     count?: number;
 }

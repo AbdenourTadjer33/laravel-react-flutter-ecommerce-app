@@ -25,7 +25,7 @@ class ProductController extends Controller
     public function create()
     {
         return Inertia::render('Product/Create', [
-            'brands' => CategoryResource::collection(Category::get()),
+            'categories' => CategoryResource::collection(Category::get()),
         ]);
     }
 

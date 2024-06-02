@@ -29,7 +29,7 @@ class UpdateRequest extends FormRequest
             'status' => ['required', 'boolean'],
             'sizes' => ['required', 'array', 'min:1'],
             'sizes.*' => ['required', 'numeric'],
-            'brand_id' => ['required', Rule::exists('brands', 'id')],
+            'category_id' => ['required', Rule::exists('categories', 'id')],
             'images' => ['nullable', 'array'],
             'images.*' => ['nullable', 'string', 'url'],
         ];

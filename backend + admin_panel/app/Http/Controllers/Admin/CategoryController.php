@@ -10,16 +10,16 @@ use App\Http\Requests\Admin\Brand\StoreRequest;
 use App\Http\Resources\Admin\CategoryResource;
 use App\Models\Category;
 
-class BrandController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $brands = CategoryResource::collection(Category::withCount('products')->paginate(40));
-        return Inertia::render('Brand/Index', [
-            'brands' => $brands,
+        $categories = CategoryResource::collection(Category::withCount('products')->paginate(40));
+        return Inertia::render('Category/Index', [
+            'categories' => $categories,
         ]);
     }
 
@@ -28,7 +28,7 @@ class BrandController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Brand/Create');
+        return Inertia::render('Category/Create');
     }
 
     /**
@@ -38,51 +38,49 @@ class BrandController extends Controller
     {
         Category::create([
             'name' => $request->input('name'),
-            'logo' => $request->input('logo'),
         ]);
 
-        return redirect(route('admin.brand.index'))->with('alert', [
+        return redirect(route('admin.category.index'))->with('alert', [
             'status' => 'success',
-            'message' => 'Brand créer avec succés',
+            'message' => 'Categorie créer avec succés',
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $brand)
+    public function edit(Category $category)
     {
-        return Inertia::render('Brand/Edit', [
-            'brand' => $brand,
+        return Inertia::render('Category/Edit', [
+            'category' => $category,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $brand)
+    public function update(Request $request, Category $category)
     {
-        $brand->update([
+        $category->update([
             'name' => $request->input('name'),
-            'logo' => $request->input('logo'),
         ]);
 
-        return redirect(route('admin.brand.index'))->with('alert', [
+        return redirect(route('admin.category.index'))->with('alert', [
             'status' => 'success',
-            'message' => 'brand modifier avec succés',
+            'message' => 'categorie modifier avec succés',
         ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $brand)
+    public function destroy(Category $category)
     {
-        $brand->delete();
+        $category->delete();
 
-        return redirect(route('admin.brand.index'))->with('alert', [
+        return redirect(route('admin.category.index'))->with('alert', [
             'status' => 'success',
-            'message' => 'brand supprimé avec succés',
+            'message' => 'categorie supprimé avec succés',
         ]);
     }
 }

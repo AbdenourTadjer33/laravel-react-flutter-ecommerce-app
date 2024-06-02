@@ -1,5 +1,5 @@
 import React from "react";
-import { Brand, Pagination } from "@/types";
+import { Category, Pagination } from "@/types";
 import {
     createColumnHelper,
     getCoreRowModel,
@@ -29,7 +29,7 @@ import {
 import { FaInfoCircle } from "react-icons/fa";
 import dayjs from "dayjs";
 
-const columnHelper = createColumnHelper<Brand>();
+const columnHelper = createColumnHelper<Category>();
 
 const columnDef = [
     columnHelper.accessor("id", {
@@ -37,7 +37,7 @@ const columnDef = [
     }),
 
     columnHelper.accessor("name", {
-        header: "brand",
+        header: "categorie",
     }),
 
     columnHelper.accessor("count", {
@@ -57,11 +57,11 @@ const columnDef = [
     }),
 ];
 
-const Actions = ({ row }: { row: Row<Brand> }) => {
+const Actions = ({ row }: { row: Row<Category> }) => {
     const [beforeDeleteModal, setBeforeDeleteModal] = React.useState(false);
 
     const deleteProduct = (id: string) => {
-        router.delete(route("admin.brand.destroy", id), {
+        router.delete(route("admin.category.destroy", id), {
             preserveScroll: true,
             onSuccess: () => setBeforeDeleteModal(false),
         });
@@ -78,7 +78,7 @@ const Actions = ({ row }: { row: Row<Brand> }) => {
                 <DropdownMenuContent>
                     <DropdownMenuItem asChild>
                         <Link
-                            href={route("admin.brand.edit", row.id)}
+                            href={route("admin.category.edit", row.id)}
                             className="flex items-center gap-2"
                         >
                             <MdEdit className="w-4 h-4" />
@@ -131,8 +131,8 @@ const Actions = ({ row }: { row: Row<Brand> }) => {
     );
 };
 
-const BrandTable = ({ brands }: { brands: Pagination<Brand> }) => {
-    const finalData = React.useMemo(() => brands.data, [brands.data]);
+const CategoryTable = ({ categories }: { categories: Pagination<Category> }) => {
+    const finalData = React.useMemo(() => categories.data, [categories.data]);
     const finaleColumnDef = React.useMemo(() => columnDef, []);
 
     const table = useReactTable({
@@ -150,8 +150,8 @@ const BrandTable = ({ brands }: { brands: Pagination<Brand> }) => {
                 options={{
                     table,
                     pagination: {
-                        links: brands.links,
-                        meta: brands.meta,
+                        links: categories.links,
+                        meta: categories.meta,
                     },
                 }}
             />
@@ -159,4 +159,4 @@ const BrandTable = ({ brands }: { brands: Pagination<Brand> }) => {
     );
 };
 
-export default BrandTable;
+export default CategoryTable;

@@ -7,7 +7,7 @@ import { Input, InputError } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
 import { Checkbox } from "@/Components/ui/checkbox";
-import { Brand } from "@/types";
+import { Category } from "@/types";
 import {
     Select,
     SelectContent,
@@ -19,7 +19,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/Components/ui/toggle-group";
 import { destroy, store } from "@/Service/files";
 import { MdDelete } from "react-icons/md";
 
-const Create = ({ brands }: { brands: Brand[] }) => {
+const Create = ({ categories }: { categories: Category[] }) => {
     const { data, setData, errors, post, processing, clearErrors } = useForm<{
         name: string;
         description: string;
@@ -27,7 +27,8 @@ const Create = ({ brands }: { brands: Brand[] }) => {
         status: boolean;
         images: string[];
         sizes: string[];
-        brand_id: string;
+        category_id: string;
+        brand: string;
     }>({
         name: "",
         description: "",
@@ -35,7 +36,8 @@ const Create = ({ brands }: { brands: Brand[] }) => {
         status: true,
         images: [],
         sizes: [],
-        brand_id: "",
+        category_id: "",
+        brand: "",
     });
 
     const handleImageUpload = async (
@@ -56,12 +58,12 @@ const Create = ({ brands }: { brands: Brand[] }) => {
         e.target.value = "";
     };
 
-  const deleteImage = async (id: string, idx: number) => {
-      const images = [...data.images];
-      images.splice(idx, 1);
-      setData("images", images);
-      await destroy(id);
-  };
+    const deleteImage = async (id: string, idx: number) => {
+        const images = [...data.images];
+        images.splice(idx, 1);
+        setData("images", images);
+        await destroy(id);
+    };
 
     const submitHandler = (e: React.FormEvent) => {
         e.preventDefault();
@@ -102,29 +104,29 @@ const Create = ({ brands }: { brands: Brand[] }) => {
                 </div>
 
                 <div className="space-y-1">
-                    <Label>Brand</Label>
+                    <Label>Categorie</Label>
                     <Select
-                        value={data.brand_id}
+                        value={data.category_id}
                         onValueChange={(value) => {
-                            clearErrors("brand_id");
-                            setData("brand_id", value);
+                            clearErrors("category_id");
+                            setData("category_id", value);
                         }}
                     >
                         <SelectTrigger>
-                            <SelectValue placeholder="brand" />
+                            <SelectValue placeholder="sélectionnze une categorie" />
                         </SelectTrigger>
                         <SelectContent>
-                            {brands.map((brand) => (
+                            {categories.map((Category) => (
                                 <SelectItem
-                                    key={brand.id}
-                                    value={String(brand.id)}
+                                    key={Category.id}
+                                    value={String(Category.id)}
                                 >
-                                    {brand.name}
+                                    {Category.name}
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
-                    <InputError message={errors.brand_id} />
+                    <InputError message={errors.category_id} />
                 </div>
 
                 <div className="space-y-1 col-span-3">
@@ -139,7 +141,7 @@ const Create = ({ brands }: { brands: Brand[] }) => {
                     <InputError message={errors.description} />
                 </div>
 
-                <div className="space-y-1 col-span-3">
+                <div className="space-y-1 col-span-2">
                     <Label>Séléctionnez les pointeur disponible</Label>
                     <ToggleGroup
                         variant="outline"
@@ -163,6 +165,16 @@ const Create = ({ brands }: { brands: Brand[] }) => {
                         ))}
                     </ToggleGroup>
                     <InputError message={errors.sizes} />
+                </div>
+
+                <div className="space-y-1">
+                    <Label>Brand</Label>
+                    <Input
+                        value={data.brand}
+                        onChange={(e) => setData("brand", e.target.value)}
+                        placeholder="optional"
+                    />
+                    <InputError message={errors.brand} />
                 </div>
 
                 <div className="space-y-1 col-span-3">

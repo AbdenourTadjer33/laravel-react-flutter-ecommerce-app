@@ -26,9 +26,9 @@ const Navbar = () => {
             isPage: route().current("admin.admin.*"),
         },
         {
-            label: "Gestion de brands",
-            route: "admin.brand.index",
-            isPage: route().current("admin.brand.*"),
+            label: "Gestion de categories",
+            route: "admin.category.index",
+            isPage: route().current("admin.category.*"),
         },
         {
             label: "Gestion de produits",

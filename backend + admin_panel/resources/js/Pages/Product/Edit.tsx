@@ -7,7 +7,7 @@ import { Input, InputError } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { Checkbox } from "@/Components/ui/checkbox";
 import { Label } from "@/Components/ui/label";
-import { Brand, Product } from "@/types";
+import { Category, Product } from "@/types";
 import {
     Select,
     SelectContent,
@@ -18,7 +18,7 @@ import {
 import { destroy, store } from "@/Service/files";
 import { MdDelete } from "react-icons/md";
 
-const Edit = ({ product, brands }: { product: Product; brands: Brand[] }) => {
+const Edit = ({ product, categories }: { product: Product; categories: Category[] }) => {
     const { data, setData, errors, clearErrors, processing, put } = useForm<{
         name: string;
         description: string;
@@ -26,7 +26,8 @@ const Edit = ({ product, brands }: { product: Product; brands: Brand[] }) => {
         status: boolean;
         images: string[];
         sizes: string[];
-        brand_id: string;
+        category_id: string;
+        brand: string,
     }>({
         name: product.name || "",
         description: product.description || "",
@@ -34,7 +35,8 @@ const Edit = ({ product, brands }: { product: Product; brands: Brand[] }) => {
         status: product.status,
         images: product.images || [],
         sizes: product.sizes || [],
-        brand_id: product.brand_id || "",
+        category_id: product.category_id || "",
+        brand: product.brand || "",
     });
 
     const handleImageUpload = async (
@@ -99,32 +101,32 @@ const Edit = ({ product, brands }: { product: Product; brands: Brand[] }) => {
                 </div>
 
                 <div className="space-y-1">
-                    <Label>Brand</Label>
+                    <Label>Categorie</Label>
                     <Select
-                        value={String(data.brand_id)}
+                        value={String(data.category_id)}
                         onValueChange={(value) => {
-                            clearErrors("brand_id");
-                            setData("brand_id", value);
+                            clearErrors("category_id");
+                            setData("category_id", value);
                         }}
                     >
                         <SelectTrigger>
-                            <SelectValue placeholder="brand" />
+                            <SelectValue placeholder="selectionner une categorie" />
                         </SelectTrigger>
                         <SelectContent>
-                            {brands.map((brand) => (
+                            {categories.map((category) => (
                                 <SelectItem
-                                    key={brand.id}
-                                    value={String(brand.id)}
+                                    key={category.id}
+                                    value={String(category.id)}
                                 >
-                                    {brand.name}
+                                    {category.name}
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
-                    <InputError message={errors.brand_id} />
+                    <InputError message={errors.category_id} />
                 </div>
 
-                <div className="space-y-1 col-span-3">
+                <div className="space-y-1 col-span-2">
                     <Label>Description</Label>
                     <Textarea
                         value={data.description}
@@ -134,6 +136,11 @@ const Edit = ({ product, brands }: { product: Product; brands: Brand[] }) => {
                         }}
                     />
                     <InputError message={errors.description} />
+                </div>
+
+                <div className="space-y-1">
+                    <Label>Brand</Label>
+                    <Input value={data.brand} onChange={(e) => setData('brand', e.target.value)}/>
                 </div>
 
                 <div className="space-y-1 col-span-3">

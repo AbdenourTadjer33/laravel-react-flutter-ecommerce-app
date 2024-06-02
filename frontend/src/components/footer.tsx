@@ -1,7 +1,8 @@
 import React from "react";
 import logo from "@/assets/logo.png";
 import { Link } from "@tanstack/react-router";
-import { Facebook, Instagram, Twitter } from "lucide-react";
+import { FaFacebook } from "react-icons/fa";
+import { FaInstagram } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -14,13 +15,10 @@ const Footer = () => {
 
           <div className="flex items-center text-sm font-medium text-gray-500 dark:text-gray-400">
             <a href="https://facebook.com" target="_blank" className="hover:underline me-4 md:me-6">
-              <Facebook className="w-6 h-6" />
+              <FaFacebook className="w-6 h-6 text-blue-600" />
             </a>
             <a href="https://instagram.com" target="_blank" className="hover:underline me-4 md:me-6">
-              <Instagram className="w-6 h-6" />
-            </a>
-            <a href="https://x.com" target="_blank" className="hover:underline">
-              <Twitter className="w-6 h-6" />
+              <FaInstagram className="w-6 h-6 text-violet-800" />
             </a>
           </div>
         </div>
